@@ -122,7 +122,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws BeansException {
+		// 判断是不是已经有已经初始化的beanFactory对象
 		if (hasBeanFactory()) {
+			// 如果已经有之前已经初始化的beanFactory对象 那么就先进行原始的beanFactory容器对象的清理
 			destroyBeans();
 			closeBeanFactory();
 		}

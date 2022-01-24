@@ -16,16 +16,11 @@
 
 package org.springframework.util;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.lang.Nullable;
+
+import java.util.*;
 
 /**
  * Utility class for working with Strings that have placeholder values in them. A placeholder takes the form
@@ -89,6 +84,7 @@ public class PropertyPlaceholderHelper {
 		this.placeholderPrefix = placeholderPrefix;
 		this.placeholderSuffix = placeholderSuffix;
 		String simplePrefixForSuffix = wellKnownSimplePrefixes.get(this.placeholderSuffix);
+		// 从已经知晓的经常常用的那一套map 然后检测是不是经常使用的一对括号
 		if (simplePrefixForSuffix != null && this.placeholderPrefix.endsWith(simplePrefixForSuffix)) {
 			this.simplePrefix = simplePrefixForSuffix;
 		}
@@ -127,15 +123,21 @@ public class PropertyPlaceholderHelper {
 	protected String parseStringValue(
 			String value, PlaceholderResolver placeholderResolver, @Nullable Set<String> visitedPlaceholders) {
 
+		// 判断原始的路径连接里面是不是包含指定的路径解析的前缀
 		int startIndex = value.indexOf(this.placeholderPrefix);
 		if (startIndex == -1) {
+			// 如果没有需要替换的 那么直接返回原始的字符串就可以
 			return value;
 		}
 
+		// 如果路径里面有占位符 尝试开始进行路径的替换 将对应占位符进行数据的替换
+		// 假设对应的value是 classpath:${placeholder}-production.xml
 		StringBuilder result = new StringBuilder(value);
 		while (startIndex != -1) {
+			// 找到当前能找到的和占位符前置位匹配的后续的终止占位符
 			int endIndex = findPlaceholderEndIndex(result, startIndex);
 			if (endIndex != -1) {
+				// 取出对应的占位符的部分 如果按照按理的路径的话 就是 placeholder 这个字符
 				String placeholder = result.substring(startIndex + this.placeholderPrefix.length(), endIndex);
 				String originalPlaceholder = placeholder;
 				if (visitedPlaceholders == null) {
@@ -146,14 +148,18 @@ public class PropertyPlaceholderHelper {
 							"Circular placeholder reference '" + originalPlaceholder + "' in property definitions");
 				}
 				// Recursive invocation, parsing placeholders contained in the placeholder key.
+				// TODO 这个地方为什么会进行递归调用? 是在解析什么么?
 				placeholder = parseStringValue(placeholder, placeholderResolver, visitedPlaceholders);
 				// Now obtain the value for the fully resolved key...
+				// 获取出来对应的解析 但是感觉这个部分的逻辑可以搞到一起 目前的逻辑是取了第一个value进行直接的默认值占位
+				// 如果placeholder的部分是形如 placeholder:default1:default2 默认的会直接认为默认值是 default1:default2
 				String propVal = placeholderResolver.resolvePlaceholder(placeholder);
 				if (propVal == null && this.valueSeparator != null) {
 					int separatorIndex = placeholder.indexOf(this.valueSeparator);
 					if (separatorIndex != -1) {
 						String actualPlaceholder = placeholder.substring(0, separatorIndex);
 						String defaultValue = placeholder.substring(separatorIndex + this.valueSeparator.length());
+						// 这个是为了给对应的默认值
 						propVal = placeholderResolver.resolvePlaceholder(actualPlaceholder);
 						if (propVal == null) {
 							propVal = defaultValue;
@@ -181,6 +187,7 @@ public class PropertyPlaceholderHelper {
 				visitedPlaceholders.remove(originalPlaceholder);
 			}
 			else {
+				// 如果找不到对应的占位符的终止 那么就不需要找了 也不需要进行替换
 				startIndex = -1;
 			}
 		}
@@ -188,6 +195,8 @@ public class PropertyPlaceholderHelper {
 	}
 
 	private int findPlaceholderEndIndex(CharSequence buf, int startIndex) {
+		// classpath:${placeholder}-production.xml
+		// 先获取${placeholder}部分的{和}括起来的部分
 		int index = startIndex + this.placeholderPrefix.length();
 		int withinNestedPlaceholder = 0;
 		while (index < buf.length()) {

@@ -74,10 +74,13 @@ public abstract class AbstractRefreshableConfigApplicationContext extends Abstra
 	 * <p>If not set, the implementation may use a default as appropriate.
 	 */
 	public void setConfigLocations(@Nullable String... locations) {
+		// 根据传进来的配置文件路径 然后进行对应的路径的解析
+		// 这个函数目前看来决定了配置文件的读取方式和位置(最起码对于ClassPathXmlApplicationContext是xml的配置文件的地址)
 		if (locations != null) {
 			Assert.noNullElements(locations, "Config locations must not be null");
 			this.configLocations = new String[locations.length];
 			for (int i = 0; i < locations.length; i++) {
+				// 这个地方是将对应的占位符的地址路径进行替换
 				this.configLocations[i] = resolvePath(locations[i]).trim();
 			}
 		}
@@ -122,6 +125,8 @@ public abstract class AbstractRefreshableConfigApplicationContext extends Abstra
 	 * @see org.springframework.core.env.Environment#resolveRequiredPlaceholders(String)
 	 */
 	protected String resolvePath(String path) {
+		// 将路径对应的涉及到引用的部分解为真实的路径
+		// 从ClasspathXmlApplicationContext断点里面返回的是StandardEnvironment对象
 		return getEnvironment().resolveRequiredPlaceholders(path);
 	}
 

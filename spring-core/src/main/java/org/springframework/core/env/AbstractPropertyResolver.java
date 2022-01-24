@@ -205,6 +205,8 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 	@Override
 	public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
 		if (this.strictHelper == null) {
+			// 这个地方的helper是一个严格的helper对象
+			// 设置的不会忽略不能解析的路径
 			this.strictHelper = createPlaceholderHelper(false);
 		}
 		return doResolvePlaceholders(text, this.strictHelper);
@@ -228,6 +230,8 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 	}
 
 	private PropertyPlaceholderHelper createPlaceholderHelper(boolean ignoreUnresolvablePlaceholders) {
+		// 返回对应的helper
+		// 前缀字符串${ 后缀字符串} ${abc:def} 默认的分隔符:
 		return new PropertyPlaceholderHelper(this.placeholderPrefix, this.placeholderSuffix,
 				this.valueSeparator, ignoreUnresolvablePlaceholders);
 	}
@@ -247,6 +251,7 @@ public abstract class AbstractPropertyResolver implements ConfigurablePropertyRe
 	@SuppressWarnings("unchecked")
 	@Nullable
 	protected <T> T convertValueIfNecessary(Object value, @Nullable Class<T> targetType) {
+		// 如果没有转换的目标类型  那么就直接返回对应的原始值就可以
 		if (targetType == null) {
 			return (T) value;
 		}

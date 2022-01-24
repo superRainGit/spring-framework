@@ -139,8 +139,11 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			throws BeansException {
 
 		super(parent);
+		// 设置对应的访问资源的文件路径 并且同时做对应的路径的预处理
+		// 这个地方还得再看看  断点需要重新的跟一下 防止出现理解的问题
 		setConfigLocations(configLocations);
 		if (refresh) {
+			// 这个是spring最最核心的东西
 			refresh();
 		}
 	}
