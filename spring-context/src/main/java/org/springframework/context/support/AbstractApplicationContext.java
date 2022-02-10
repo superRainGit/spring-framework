@@ -494,6 +494,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			// 创建一个新的beanFactory对象
+			// 目前看使用的dom的方式进行的文档解析
+			// 里面获取到对应的BeanDefinition对象 一个是beanDefinitionMap 一个是beanDefinitionNames
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
@@ -614,6 +617,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
 		refreshBeanFactory();
+		// 返回对应的已经创建好的beanFactory对象 其中包含了从XML文件中读取到的beanDefinition对象
 		return getBeanFactory();
 	}
 
@@ -655,6 +659,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Register default environment beans.
+		// 向beanFactory中增加对应的key和对应的value
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 		}

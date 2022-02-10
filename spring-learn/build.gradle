@@ -19,3 +19,11 @@ dependencies {
     compile 'ch.qos.logback:logback-core:1.1.3'
     compile 'ch.qos.logback:logback-classic:1.1.3'
 }
+
+test {
+    // 这个配置，是为了让gradle在运行测试时将标准输出等展示出来
+    testLogging {
+        outputs.upToDateWhen {false}
+        showStandardStreams = true
+    }
+}

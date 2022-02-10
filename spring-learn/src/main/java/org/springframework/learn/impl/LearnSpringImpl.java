@@ -1,6 +1,7 @@
 package org.springframework.learn.impl;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.learn.interfaces.ILearnSpringInterface;
@@ -8,7 +9,7 @@ import org.springframework.learn.interfaces.ILearnSpringInterface;
 /**
  * @author zhangcy
  */
-public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContextAware {
+public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContextAware, InitializingBean {
 
 	private String age;
 
@@ -33,5 +34,10 @@ public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContex
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		this.age = "200";
 	}
 }

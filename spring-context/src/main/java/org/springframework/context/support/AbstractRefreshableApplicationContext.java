@@ -126,11 +126,14 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 		if (hasBeanFactory()) {
 			// 如果已经有之前已经初始化的beanFactory对象 那么就先进行原始的beanFactory容器对象的清理
 			destroyBeans();
+			// 处理当前applicationContext中beanFactory对象
 			closeBeanFactory();
 		}
 		try {
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
+			// 从当前的applicationContext中获取对应的属性 用来覆盖对应的beanFactory中的属性
+			// 从理解上看 其实就是用applicationContext决定了内部创建Bean工厂创建bean的行为
 			customizeBeanFactory(beanFactory);
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
@@ -224,6 +227,7 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	 * @see DefaultListableBeanFactory#setAllowEagerClassLoading
 	 */
 	protected void customizeBeanFactory(DefaultListableBeanFactory beanFactory) {
+		// 根据当前容器的配置修改创建的beanFactory的部分行为
 		if (this.allowBeanDefinitionOverriding != null) {
 			beanFactory.setAllowBeanDefinitionOverriding(this.allowBeanDefinitionOverriding);
 		}

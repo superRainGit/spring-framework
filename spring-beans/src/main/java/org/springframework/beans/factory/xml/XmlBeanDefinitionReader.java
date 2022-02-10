@@ -150,6 +150,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	public void setValidating(boolean validating) {
 		this.validationMode = (validating ? VALIDATION_AUTO : VALIDATION_NONE);
+		// 这个是干嘛的？
 		this.namespaceAware = !validating;
 	}
 
