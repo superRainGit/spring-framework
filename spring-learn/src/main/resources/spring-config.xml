@@ -8,4 +8,29 @@
 		<property name="age" value="28"/>
 	</bean>
 
+	<bean class="java.lang.String" />
+	<bean class="java.lang.String" />
+
+	<!-- 使用的传统意义上的统一构建 用的是构造器的方式去构建的 -->
+	<bean class="org.springframework.learn.bean.UserModel" />
+	<bean class="org.springframework.learn.bean.UserModel">
+		<constructor-arg index="0" value="测试名称好玩" />
+		<constructor-arg index="1" value="12" />
+	</bean>
+
+	<!-- 使用静态工厂的方式创建对应的bean -->
+	<bean class="org.springframework.learn.factory.StaticFactory" factory-method="buildSimpleUser" />
+	<bean class="org.springframework.learn.factory.StaticFactory" factory-method="buildComplexUser">
+		<constructor-arg index="0" value="测试名称" />
+		<constructor-arg index="1" value="22" />
+	</bean>
+
+	<!-- 使用工厂方法的方式创建对应的bean -->
+	<bean id="simpleBeanFactory" class="org.springframework.learn.factory.SimpleBeanFactory" />
+	<bean factory-bean="simpleBeanFactory" factory-method="buildSimpleUser" />
+	<bean factory-bean="simpleBeanFactory" factory-method="buildComplexUser">
+		<constructor-arg index="0" value="测试名称简单" />
+		<constructor-arg index="1" value="22" />
+	</bean>
+
 </beans>

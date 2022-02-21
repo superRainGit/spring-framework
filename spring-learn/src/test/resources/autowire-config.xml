@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 以下的按照构造器方式的类型进行注入 -->
+	<bean class="org.springframework.learn.autowire.DiByConstructor$Service1">
+		<property name="desc" value="service1" />
+	</bean>
+	<bean class="org.springframework.learn.autowire.DiByConstructor$Service2">
+		<property name="desc" value="service2" />
+	</bean>
+	<bean class="org.springframework.learn.autowire.DiByConstructor" autowire="constructor" />
+
+	<!-- 以下的测试按照类型的方式的扩展进行注入 -->
+	<bean class="org.springframework.learn.autowire.DiByTypeExtend$Service1">
+		<property name="desc" value="extService1" />
+	</bean>
+	<bean class="org.springframework.learn.autowire.DiByTypeExtend$Service2" />
+	<bean class="org.springframework.learn.autowire.DiByTypeExtend" autowire="byType" />
+
+	<!-- 以下的测试按照类型的方式进行注入 -->
+	<bean class="org.springframework.learn.autowire.DiByType$Service1">
+		<property name="desc" value="abc" />
+	</bean>
+	<bean class="org.springframework.learn.autowire.DiByType$Service2">
+		<property name="decs" value="def" />
+	</bean>
+	<bean class="org.springframework.learn.autowire.DiByType" autowire="byType" />
+
+	<!-- 以下的测试按照名字的方式进行注入 -->
+	<bean id="service1" class="org.springframework.learn.autowire.DiByName$Service1">
+		<property name="desc" value="service1" />
+	</bean>
+
+	<bean id="service2" class="org.springframework.learn.autowire.DiByName$Service2">
+		<property name="decs" value="service2" />
+	</bean>
+
+	<bean id="service2-1" class="org.springframework.learn.autowire.DiByName$Service2">
+		<property name="decs" value="service2-1" />
+	</bean>
+
+	<!-- autowire：byName 配置按照name进行自动注入 -->
+	<bean id="diByName1" class="org.springframework.learn.autowire.DiByName" autowire="byName" />
+
+	<!-- 当配置了自动注入，还可以使用手动的方式自动注入进行覆盖，手动的优先级更高一些 -->
+	<bean id="diByName2" class="org.springframework.learn.autowire.DiByName" autowire="byName">
+		<property name="service2" ref="service2-1" />
+	</bean>
+
+</beans>

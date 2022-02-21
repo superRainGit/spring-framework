@@ -4,16 +4,20 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 import org.springframework.learn.interfaces.ILearnSpringInterface;
 
 /**
  * @author zhangcy
  */
-public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContextAware, InitializingBean {
+public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContextAware, InitializingBean, EnvironmentAware {
 
 	private String age;
 
 	private ApplicationContext applicationContext;
+
+	private Environment environment;
 
 	public void setAge(String age) {
 		this.age = age;
@@ -39,5 +43,11 @@ public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContex
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.age = "200";
+		this.age = environment.getProperty("name");
+	}
+
+	@Override
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
 	}
 }
