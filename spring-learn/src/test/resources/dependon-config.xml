@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 强绑定依赖关系的bean进行创建 -->
+	<!--
+		bean对象的创建顺序和bean依赖的顺序一致
+		bean销毁的顺序和bean创建的顺序相反
+	-->
+	<!--
+	<bean id="bean3" class="org.springframework.learn.depend.StrongDependenceBean$Bean3">
+		<constructor-arg name="bean2" ref="bean2" />
+	</bean>
+	<bean id="bean2" class="org.springframework.learn.depend.StrongDependenceBean$Bean2">
+		<constructor-arg name="bean1" ref="bean1" />
+	</bean>
+	<bean id="bean1" class="org.springframework.learn.depend.StrongDependenceBean$Bean1" />
+	-->
+
+
+	<!-- 没有任何依赖关系的bean进行创建 -->
+	<!-- 默认会按照xml中定义的顺序自上至下的进行bean的创建 -->
+	<!-- 销毁时以创建bean顺序反序进行销毁 -->
+	<bean id="bean3" class="org.springframework.learn.depend.NormalBean$Bean3" depends-on="bean2, bean1" />
+	<bean id="bean2" class="org.springframework.learn.depend.NormalBean$Bean2" />
+	<bean id="bean1" class="org.springframework.learn.depend.NormalBean$Bean1" />
+
+</beans>

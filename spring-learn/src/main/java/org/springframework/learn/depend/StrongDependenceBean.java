@@ -7,7 +7,7 @@ import org.springframework.beans.factory.DisposableBean;
  * 没有任何的依赖关系
  * @author zhangcy
  */
-public class NormalBean {
+public class StrongDependenceBean {
 
 	public static class Bean1 implements DisposableBean {
 
@@ -23,7 +23,10 @@ public class NormalBean {
 
 	public static class Bean2 implements DisposableBean {
 
-		public Bean2() {
+		private Bean1 bean1;
+
+		public Bean2(Bean1 bean1) {
+			this.bean1 = bean1;
 			System.out.println("bean2 created");
 		}
 
@@ -36,7 +39,10 @@ public class NormalBean {
 
 	public static class Bean3 implements DisposableBean {
 
-		public Bean3() {
+		private Bean2 bean2;
+
+		public Bean3(Bean2 bean2) {
+			this.bean2 = bean2;
 			System.out.println("bean3 created");
 		}
 

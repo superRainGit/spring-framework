@@ -14,9 +14,14 @@ import org.springframework.learn.autowire.DiByConstructor;
 import org.springframework.learn.autowire.DiByType;
 import org.springframework.learn.autowire.DiByTypeExtend;
 import org.springframework.learn.interfaces.ILearnSpringInterface;
+import org.springframework.learn.lookup.NormalBeanForLookUp;
+import org.springframework.learn.lookup.NormalBeanForReplaced;
+import org.springframework.learn.proxy.IService;
 import org.springframework.learn.scope.BeanScopeModel;
 import org.springframework.learn.scope.ThreadScope;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -46,9 +51,54 @@ public class TestXmlContext {
 	public void before() {
 		logger.debug("spring容器准备启动.....");
 		// 文件绝对逻辑
-		String filePath = "classpath:autowire-config.xml";
+		String filePath = "classpath:lookup-config.xml";
 		this.context = new ClassPathXmlApplicationContext(filePath);
 		logger.debug("spring容器启动完毕！");
+	}
+
+	/**
+	 * 测试简单代理
+	 */
+	@Test
+	public void testSimpleProxy() throws Exception {
+		Class<IService> proxyClass = (Class<IService>) Proxy.getProxyClass(IService.class.getClassLoader(), IService.class);
+		InvocationHandler handler = (o, method, objects) -> {
+			System.out.println("invoke method " + method.getName());
+			return null;
+		};
+		IService iService = proxyClass.getConstructor(InvocationHandler.class).newInstance(handler);
+		iService.m1();
+		iService.m2();
+	}
+
+	/**
+	 * 测试replace-method
+	 */
+	@Test
+	public void testReplaceMethod() {
+		logger.debug("" + this.context.getBean(NormalBeanForReplaced.ServiceA.class));
+		logger.debug("" + this.context.getBean(NormalBeanForReplaced.ServiceA.class));
+		logger.debug("" + this.context.getBean(NormalBeanForReplaced.ServiceB.class));
+		logger.debug("" + this.context.getBean(NormalBeanForReplaced.ServiceB.class));
+	}
+
+	/**
+	 * 测试lookUp
+	 */
+	@Test
+	public void testLookUp() {
+		logger.debug("" + this.context.getBean(NormalBeanForLookUp.ServiceA.class));
+		logger.debug("" + this.context.getBean(NormalBeanForLookUp.ServiceA.class));
+		logger.debug("" + this.context.getBean(NormalBeanForLookUp.ServiceB.class));
+		logger.debug("" + this.context.getBean(NormalBeanForLookUp.ServiceB.class));
+	}
+
+	/**
+	 * 测试depends on 以及bean的初始化关系
+	 */
+	@Test
+	public void testDependOn() {
+		((ClassPathXmlApplicationContext)this.context).close();
 	}
 
 	/**
