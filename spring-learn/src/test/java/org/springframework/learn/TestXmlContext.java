@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.cglib.proxy.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.learn.autowire.DiByConstructor;
@@ -17,10 +18,13 @@ import org.springframework.learn.interfaces.ILearnSpringInterface;
 import org.springframework.learn.lookup.NormalBeanForLookUp;
 import org.springframework.learn.lookup.NormalBeanForReplaced;
 import org.springframework.learn.proxy.IService;
+import org.springframework.learn.proxy.MethodCostHandler;
+import org.springframework.learn.proxy.ServiceA;
 import org.springframework.learn.scope.BeanScopeModel;
 import org.springframework.learn.scope.ThreadScope;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.List;
@@ -57,16 +61,93 @@ public class TestXmlContext {
 	}
 
 	/**
+	 * 设置多callBack的场景
+	 */
+	@Test
+	public void testMultipleCallBack() {
+		Enhancer enhancer = new Enhancer();
+		// 设置父类
+		enhancer.setSuperclass(ServiceA.class);
+		// 设置两个callBack
+		// 这个是拦截方法调用
+		MethodInterceptor methodInterceptor = (obj, method, args, methodProxy) -> {
+			logger.debug("invoke method " + method.getName());
+			long start = System.nanoTime();
+			Object result = methodProxy.invokeSuper(obj, args);
+			long end = System.nanoTime();
+			logger.debug("invoke cost time " + (end - start));
+			return result;
+		};
+		// 这个是返回默认值
+		FixedValue fixedValue = () -> "default value";
+		// 设置回调
+		enhancer.setCallbacks(new Callback[]{methodInterceptor, fixedValue});
+		// 设置一个callBack的过滤器
+		enhancer.setCallbackFilter((method) -> {
+			String name = method.getName();
+			if(name.startsWith("get")) {
+				return 1;
+			}
+			return 0;
+		});
+		ServiceA serviceA = (ServiceA) enhancer.create();
+		serviceA.m1();
+		System.out.println(serviceA.get1());
+	}
+
+	@Test
+	public void testCglib() {
+		// 创建Enhancer对象
+		Enhancer enhancer = new Enhancer();
+		// 设置父类
+		enhancer.setSuperclass(ServiceA.class);
+		// 设置回调
+		enhancer.setCallback((MethodInterceptor) (o, method, objects, methodProxy) -> {
+			logger.debug("invoke parent before");
+			Object result = methodProxy.invokeSuper(o, objects);
+			logger.debug("invoke parent after");
+			return result;
+		});
+		// 返回默认值
+		enhancer.setCallback((FixedValue) () -> "return some value");
+		// 设置直接放行 不做任何的拦截
+		enhancer.setCallback(NoOp.INSTANCE);
+		ServiceA serviceA = (ServiceA) enhancer.create();
+		serviceA.m1();
+		System.out.println(serviceA.toString());
+		// serviceA.m2();
+	}
+
+	@Test
+	public void testMethodCostHandler() {
+		ServiceA serviceA = new ServiceA();
+		IService proxy = MethodCostHandler.getProxy(serviceA, IService.class);
+		proxy.m1();
+		proxy.m2();
+	}
+
+	/**
 	 * 测试简单代理
 	 */
 	@Test
 	public void testSimpleProxy() throws Exception {
+		// 这种方法已经废弃了
 		Class<IService> proxyClass = (Class<IService>) Proxy.getProxyClass(IService.class.getClassLoader(), IService.class);
 		InvocationHandler handler = (o, method, objects) -> {
 			System.out.println("invoke method " + method.getName());
 			return null;
 		};
 		IService iService = proxyClass.getConstructor(InvocationHandler.class).newInstance(handler);
+		iService.m1();
+		iService.m2();
+		// 使用更加简单的方式创建proxy对象
+		iService = (IService) Proxy.newProxyInstance(IService.class.getClassLoader(), new Class[]{IService.class}, new InvocationHandler() {
+			@Override
+			public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
+				logger.debug("simple proxy invoke method " + method.getName());
+				return null;
+			}
+		});
 		iService.m1();
 		iService.m2();
 	}
