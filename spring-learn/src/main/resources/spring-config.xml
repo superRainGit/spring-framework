@@ -14,8 +14,18 @@
 	<!-- 使用的传统意义上的统一构建 用的是构造器的方式去构建的 -->
 	<bean class="org.springframework.learn.bean.UserModel" />
 	<bean class="org.springframework.learn.bean.UserModel">
-		<constructor-arg index="0" value="测试名称好玩" />
-		<constructor-arg index="1" value="12" />
+		<constructor-arg index="0" value="测试名称好玩" name="age" type="java.lang.String">
+			<description></description>
+<!--			<ref bean=""></ref>-->
+		</constructor-arg>
+		<constructor-arg index="1">
+			<array >
+			</array>
+<!--			<null />-->
+<!--			<ref bean="learnSpring" parent=""></ref>-->
+<!--			<value type="" />-->
+<!--			<idref bean="learnSpring" />-->
+		</constructor-arg>
 	</bean>
 
 	<!-- 使用静态工厂的方式创建对应的bean -->

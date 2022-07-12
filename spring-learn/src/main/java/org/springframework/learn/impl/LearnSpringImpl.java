@@ -42,8 +42,8 @@ public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContex
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		this.age = "200";
-		this.age = environment.getProperty("name");
+		// this.age = "200";
+		// this.age = environment.getProperty("name");
 	}
 
 	@Override

@@ -2,24 +2,23 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-        https://www.springframework.org/schema/beans/spring-beans.xsd">
+        https://www.springframework.org/schema/beans/spring-beans.xsd" profile="">
 
+	<bean id="learnSpring" class="org.springframework.learn.impl.LearnSpringImpl" abstract="true">
+		<property name="age" value="28"/>
+		<meta key="key" value="value"/>
+	</bean>
+
+	<bean id="learnSpringChild" parent="learnSpring">
+		<property name="age" value="20" />
+	</bean>
+
+	<!-- use lookup-method -->
 	<bean id="serviceA" class="org.springframework.learn.lookup.NormalBeanForLookUp$ServiceA" scope="prototype" />
 
 	<bean id="serviceB" class="org.springframework.learn.lookup.NormalBeanForLookUp$ServiceB">
 		<!-- 当调用对应的方法时spring会拦截对应的方法调用 并且通过bean的属性找到对应id的bean进行返回 -->
 		<lookup-method name="getServiceA" bean="serviceA" />
-	</bean>
-
-	<bean id="replacer" class="org.springframework.learn.lookup.NormalBeanForReplaced$ServiceMethodReplacer" />
-
-	<bean id="replaceServiceA" class="org.springframework.learn.lookup.NormalBeanForReplaced$ServiceA" scope="prototype" />
-
-	<bean id="replaceServiceB" class="org.springframework.learn.lookup.NormalBeanForReplaced$ServiceB">
-		<!-- replace method 内部还是有子标签的 -->
-		<replaced-method name="getServiceA" replacer="replacer" >
-			<arg-type match="abc" />
-		</replaced-method>
 	</bean>
 
 </beans>
