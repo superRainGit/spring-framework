@@ -794,6 +794,7 @@ public class BeanDefinitionParserDelegate {
 		// 获取name属性
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 		if (StringUtils.hasLength(indexAttr)) {
+			// 如果有index属性
 			try {
 				int index = Integer.parseInt(indexAttr);
 				if (index < 0) {
@@ -802,6 +803,7 @@ public class BeanDefinitionParserDelegate {
 				else {
 					try {
 						this.parseState.push(new ConstructorArgumentEntry(index));
+						// 解析ele对应的属性元素
 						Object value = parsePropertyValue(ele, bd, null);
 						ConstructorArgumentValues.ValueHolder valueHolder = new ConstructorArgumentValues.ValueHolder(value);
 						if (StringUtils.hasLength(typeAttr)) {
@@ -811,6 +813,7 @@ public class BeanDefinitionParserDelegate {
 							valueHolder.setName(nameAttr);
 						}
 						valueHolder.setSource(extractSource(ele));
+						// 不允许重复指定相同的参数
 						if (bd.getConstructorArgumentValues().hasIndexedArgumentValue(index)) {
 							error("Ambiguous constructor-arg entries for index " + index, ele);
 						}
@@ -828,6 +831,7 @@ public class BeanDefinitionParserDelegate {
 			}
 		}
 		else {
+			// 没有index属性 正常的解析
 			try {
 				this.parseState.push(new ConstructorArgumentEntry());
 				Object value = parsePropertyValue(ele, bd, null);
@@ -968,7 +972,7 @@ public class BeanDefinitionParserDelegate {
 			return valueHolder;
 		}
 		else if (subElement != null) {
-			// 解析配置的constructor-arg参数
+			// 解析配置的constructor-arg 配置单个的子元素
 			return parsePropertySubElement(subElement, bd);
 		}
 		else {
@@ -1048,18 +1052,23 @@ public class BeanDefinitionParserDelegate {
 			return nullHolder;
 		}
 		else if (nodeNameEquals(ele, ARRAY_ELEMENT)) {
+			// 解析 <array> 子标签
 			return parseArrayElement(ele, bd);
 		}
 		else if (nodeNameEquals(ele, LIST_ELEMENT)) {
+			// 解析 <list> 子标签
 			return parseListElement(ele, bd);
 		}
 		else if (nodeNameEquals(ele, SET_ELEMENT)) {
+			// 解析 <set> 子标签
 			return parseSetElement(ele, bd);
 		}
 		else if (nodeNameEquals(ele, MAP_ELEMENT)) {
+			// 解析 <map> 子标签
 			return parseMapElement(ele, bd);
 		}
 		else if (nodeNameEquals(ele, PROPS_ELEMENT)) {
+			// 解析 <props> 子标签
 			return parsePropsElement(ele);
 		}
 		else {
@@ -1141,12 +1150,16 @@ public class BeanDefinitionParserDelegate {
 	 * Parse an array element.
 	 */
 	public Object parseArrayElement(Element arrayEle, @Nullable BeanDefinition bd) {
+		// 获取array标签中的value-type属性
 		String elementType = arrayEle.getAttribute(VALUE_TYPE_ATTRIBUTE);
+		// 获取 <array> 标签中的所有子元素
 		NodeList nl = arrayEle.getChildNodes();
 		ManagedArray target = new ManagedArray(elementType, nl.getLength());
 		target.setSource(extractSource(arrayEle));
 		target.setElementTypeName(elementType);
 		target.setMergeEnabled(parseMergeAttribute(arrayEle));
+		// 解析 <array> 下所有的子元素
+		// <array> 标签下的所有元素和 construct-arg 有异曲同工之妙
 		parseCollectionElements(nl, target, bd, elementType);
 		return target;
 	}
@@ -1185,6 +1198,7 @@ public class BeanDefinitionParserDelegate {
 		for (int i = 0; i < elementNodes.getLength(); i++) {
 			Node node = elementNodes.item(i);
 			if (node instanceof Element && !nodeNameEquals(node, DESCRIPTION_ELEMENT)) {
+				// 这个地方又进行了子标签的解析
 				target.add(parsePropertySubElement((Element) node, bd, defaultElementType));
 			}
 		}
