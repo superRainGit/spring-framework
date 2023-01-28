@@ -16,14 +16,14 @@
 
 package org.springframework.context.support;
 
-import java.io.IOException;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextException;
 import org.springframework.lang.Nullable;
+
+import java.io.IOException;
 
 /**
  * Base class for {@link org.springframework.context.ApplicationContext}
@@ -70,7 +70,13 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	@Nullable
 	private Boolean allowCircularReferences;
 
-	/** Bean factory for this context. */
+	/**
+	 * Bean factory for this context.
+	 * 应该站在高处去看 ApplicationContext 继承自 BeanFactory
+	 * 但是起本身并不应该被理解为一个 BeanFactory
+	 * 本质上其内部维护了一个 beanFactory 的实例
+	 * 以后所有的BeanFactory相关的操作其实是委托给这个实例来处理的
+	 * */
 	@Nullable
 	private DefaultListableBeanFactory beanFactory;
 
@@ -124,17 +130,24 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
 	protected final void refreshBeanFactory() throws BeansException {
 		// 判断是不是已经有已经初始化的beanFactory对象
 		if (hasBeanFactory()) {
+			// 如果 ApplicationContext 中已经加载过 BeanFactory 了 销毁所有的 Bean 关闭 BeanFactory
+			// 注意 应用中 BeanFactory 本来就是可以有多个的 这个判断的是否有 BeanFactory 指的是
+			// 当前 ApplicationContext 中是否有 BeanFactory
 			// 如果已经有之前已经初始化的beanFactory对象 那么就先进行原始的beanFactory容器对象的清理
 			destroyBeans();
 			// 处理当前applicationContext中beanFactory对象
 			closeBeanFactory();
 		}
 		try {
+			// 这个地方为什么要初始化一个 DefaultListableBeanFactory ?
+			// 这个 DefaultListableBeanFactory 几乎是最牛的 beanFactory
 			DefaultListableBeanFactory beanFactory = createBeanFactory();
 			beanFactory.setSerializationId(getId());
 			// 从当前的applicationContext中获取对应的属性 用来覆盖对应的beanFactory中的属性
 			// 从理解上看 其实就是用applicationContext决定了内部创建Bean工厂创建bean的行为
+			// 设置BeanFactory的两个配置属性 是否允许 bean 覆盖 是否允许循环引用
 			customizeBeanFactory(beanFactory);
+			// 加载 bean 到 BeanFactory 中
 			loadBeanDefinitions(beanFactory);
 			synchronized (this.beanFactoryMonitor) {
 				this.beanFactory = beanFactory;
