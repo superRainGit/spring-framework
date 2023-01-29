@@ -2,12 +2,9 @@ package org.springframework.learn;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.learn.impl.LearnSpringImpl;
-import org.springframework.learn.lookup.NormalBeanForLookUp;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.learn.interfaces.ILearnSpringInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -48,17 +45,17 @@ public class Entrance {
 	private static Log logger = LogFactory.getLog(Entrance.class);
 
 	public static void main(String[] args) throws Exception {
-//		System.setProperty("spring", "spring");
-//		String filePath = "classpath:${spring:abc}-config.xml";
-//		ApplicationContext context = new ClassPathXmlApplicationContext(filePath);
-//		ILearnSpringInterface learnSpring = (ILearnSpringInterface) context.getBean("learnSpring");
-//		learnSpring.sayHello("Tom");
-//		getAllBeans(context);
-		BeanFactory bf = new XmlBeanFactory(new ClassPathResource("spring-book-config.xml"));
-		LearnSpringImpl learnSpring = bf.getBean("learnSpringChild", LearnSpringImpl.class);
+		System.setProperty("spring", "spring");
+		String filePath = "classpath:${spring:abc}-config.xml";
+		ApplicationContext context = new ClassPathXmlApplicationContext(filePath);
+		ILearnSpringInterface learnSpring = (ILearnSpringInterface) context.getBean("learnSpring");
 		learnSpring.sayHello("Tom");
-		NormalBeanForLookUp.ServiceB serviceB = bf.getBean("serviceB", NormalBeanForLookUp.ServiceB.class);
-		System.out.println(serviceB);
+		// getAllBeans(context);
+		// BeanFactory bf = new XmlBeanFactory(new ClassPathResource("spring-book-config.xml"));
+		// LearnSpringImpl learnSpring = bf.getBean("learnSpringChild", LearnSpringImpl.class);
+		// learnSpring.sayHello("Tom");
+		// NormalBeanForLookUp.ServiceB serviceB = bf.getBean("serviceB", NormalBeanForLookUp.ServiceB.class);
+		// System.out.println(serviceB);
 	}
 
 	public static void getAllBeans(ApplicationContext context) {
