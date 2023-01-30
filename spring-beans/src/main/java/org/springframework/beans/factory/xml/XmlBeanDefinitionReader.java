@@ -383,6 +383,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		try {
 			// 将XML文件转换为 Document 对象
 			Document doc = doLoadDocument(inputSource, resource);
+			// 这个地方是真实将 bean 转换为 beanDefinition 对象的方法
+			// 然后将对应的 beanDefinition 注册到 beanFactory 中
 			int count = registerBeanDefinitions(doc, resource);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Loaded " + count + " bean definitions from " + resource);
@@ -501,9 +503,12 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 * @see BeanDefinitionDocumentReader#registerBeanDefinitions
 	 */
 	public int registerBeanDefinitions(Document doc, Resource resource) throws BeanDefinitionStoreException {
+		// 初始化一个 BeanDefinitionDocumentReader 本质是一个 DefaultBeanDefinitionDocumentReader
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
+		// 获取一下 beanFactory 中当前已经注册的 bean 的数量
 		int countBefore = getRegistry().getBeanDefinitionCount();
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+		// 计算两次注册之间往beanFactory这个bean的工厂中注册了多少个bean
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}
 

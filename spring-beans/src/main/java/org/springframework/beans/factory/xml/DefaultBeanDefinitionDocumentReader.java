@@ -92,6 +92,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	@Override
 	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
+		// 真正进行 BeanDefinition 注册的地方
 		doRegisterBeanDefinitions(doc.getDocumentElement());
 	}
 
@@ -130,6 +131,8 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		this.delegate = createDelegate(getReaderContext(), root, parent);
 
 		if (this.delegate.isDefaultNamespace(root)) {
+			// 这个地方是检测 相关的 profile 属性是不是在使用中
+			// 如果不是在 可以使用的 profile 中 那么就直接不再解析 返回
 			String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
 			if (StringUtils.hasText(profileSpec)) {
 				String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
@@ -312,7 +315,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		// 委托delegate解析对应的element 返回BeanDefinitionHolder类型的实例
-		// 解析完成之后bdHolder实例就包含配置文件的各种属性 例如class name id alias的属性
+		// 解析完成的 holder 对象仅仅是包含了 beanName alias[] 以及 beanDefinition
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
 			// 在返回的bdHolder中如果有默认标签子节点的情况下再有自定义属性 还需要再次对自定义标签进行解析

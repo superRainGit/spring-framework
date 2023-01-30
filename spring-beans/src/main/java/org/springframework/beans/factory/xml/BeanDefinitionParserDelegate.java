@@ -500,6 +500,7 @@ public class BeanDefinitionParserDelegate {
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
 			// 硬编码解析默认bean的各种属性
+			// 然后将对应的相关属性赋值到对应的 beanDefinition 上去
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 			// 提取description
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
@@ -659,7 +660,7 @@ public class BeanDefinitionParserDelegate {
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node node = nl.item(i);
 			if (isCandidateElement(node) && nodeNameEquals(node, META_ELEMENT)) {
-				// 如果有<meta>的自元素 那么解析对应的meta标签中对应的key和value的值
+				// 如果有<meta>的子元素 那么解析对应的meta标签中对应的key和value的值
 				Element metaElement = (Element) node;
 				String key = metaElement.getAttribute(KEY_ATTRIBUTE);
 				String value = metaElement.getAttribute(VALUE_ATTRIBUTE);

@@ -499,6 +499,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// 目前看使用的dom的方式进行的文档解析
 			// 里面获取到对应的BeanDefinition对象 一个是beanDefinitionMap{beanName -> BeanDefinition}
 			// 一个是beanDefinitionNames
+			// 创建一个新的beanFactory对象 本质上是一个 DefaultListableBeanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
