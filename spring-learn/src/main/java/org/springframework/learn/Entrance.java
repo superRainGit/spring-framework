@@ -45,11 +45,14 @@ public class Entrance {
 	private static Log logger = LogFactory.getLog(Entrance.class);
 
 	public static void main(String[] args) throws Exception {
-		System.setProperty("spring", "spring");
-		String filePath = "classpath:${spring:abc}-config.xml";
-		ApplicationContext context = new ClassPathXmlApplicationContext(filePath);
-		ILearnSpringInterface learnSpring = (ILearnSpringInterface) context.getBean("learnSpring");
-		learnSpring.sayHello("Tom");
+		ApplicationContext context = new ClassPathXmlApplicationContext("spring-simple.xml");
+		ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
+		bean.sayHello("Tom");
+		// System.setProperty("spring", "spring");
+		// String filePath = "classpath:${spring:abc}-config.xml";
+		// ApplicationContext context = new ClassPathXmlApplicationContext(filePath);
+		// ILearnSpringInterface learnSpring = (ILearnSpringInterface) context.getBean("learnSpring");
+		// learnSpring.sayHello("Tom");
 		// getAllBeans(context);
 		// BeanFactory bf = new XmlBeanFactory(new ClassPathResource("spring-book-config.xml"));
 		// LearnSpringImpl learnSpring = bf.getBean("learnSpringChild", LearnSpringImpl.class);

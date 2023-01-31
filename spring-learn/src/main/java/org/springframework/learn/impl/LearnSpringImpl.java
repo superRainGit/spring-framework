@@ -21,6 +21,7 @@ public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContex
 
 	public void setAge(String age) {
 		this.age = age;
+		System.out.println("LearnSpringImpl setAge --> " + this);
 	}
 
 	/**
@@ -42,12 +43,20 @@ public class LearnSpringImpl implements ILearnSpringInterface, ApplicationContex
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// this.age = "200";
-		// this.age = environment.getProperty("name");
+		this.age = "200";
+		this.age = environment.getProperty("name");
+		System.out.println("LearnSpringImpl afterPropertiesSet --> " + this);
 	}
 
 	@Override
 	public void setEnvironment(Environment environment) {
 		this.environment = environment;
+	}
+
+	@Override
+	public String toString() {
+		return "LearnSpringImpl{" +
+				"age='" + age + '\'' +
+				'}';
 	}
 }
