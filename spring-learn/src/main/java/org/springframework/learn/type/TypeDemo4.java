@@ -31,18 +31,18 @@ public class TypeDemo4<T> {
 			System.out.println("所属类型: " + type.getOwnerType());
 			Type[] actualTypeArguments = type.getActualTypeArguments();
 			Type oneType = actualTypeArguments[0];
-			if(oneType instanceof TypeVariable) {
-				System.out.println("这个参数是泛型变量类型!");
-				TypeVariable typeVariable = (TypeVariable) oneType;
-				System.out.println("变量名称: " + typeVariable.getName());
-				System.out.println("变量声明: " + typeVariable.getGenericDeclaration());
-				Type[] bounds = typeVariable.getBounds();
-				System.out.println("变量上边界数量: " + bounds.length);
-				System.out.println("变量上边界清单: ");
-				for (Type bound : bounds) {
-					System.out.println(bound.getTypeName());
-				}
-			}
+//			if(oneType instanceof TypeVariable) {
+//				System.out.println("这个参数是泛型变量类型!");
+//				TypeVariable typeVariable = (TypeVariable) oneType;
+//				System.out.println("变量名称: " + typeVariable.getName());
+//				System.out.println("变量声明: " + typeVariable.getGenericDeclaration());
+//				Type[] bounds = typeVariable.getBounds();
+//				System.out.println("变量上边界数量: " + bounds.length);
+//				System.out.println("变量上边界清单: ");
+//				for (Type bound : bounds) {
+//					System.out.println(bound.getTypeName());
+//				}
+//			}
 		}
 		System.out.println("m1返回参数类型信息-----------------");
 		Type returnType = method.getGenericReturnType();
@@ -53,16 +53,16 @@ public class TypeDemo4<T> {
 			Type[] actualTypeArguments = type.getActualTypeArguments();
 			Type oneType = actualTypeArguments[0];
 			if(oneType instanceof TypeVariable) {
-				System.out.println("这个参数是泛型变量类型!");
-				TypeVariable typeVariable = (TypeVariable) oneType;
-				System.out.println("变量名称: " + typeVariable.getName());
-				System.out.println("变量声明: " + typeVariable.getGenericDeclaration());
-				Type[] bounds = typeVariable.getBounds();
-				System.out.println("变量上边界数量: " + bounds.length);
-				System.out.println("变量上边界清单: ");
-				for (Type bound : bounds) {
-					System.out.println(bound.getTypeName());
-				}
+//				System.out.println("这个参数是泛型变量类型!");
+//				TypeVariable typeVariable = (TypeVariable) oneType;
+//				System.out.println("变量名称: " + typeVariable.getName());
+//				System.out.println("变量声明: " + typeVariable.getGenericDeclaration());
+//				Type[] bounds = typeVariable.getBounds();
+//				System.out.println("变量上边界数量: " + bounds.length);
+//				System.out.println("变量上边界清单: ");
+//				for (Type bound : bounds) {
+//					System.out.println(bound.getTypeName());
+//				}
 			}
 		}
 	}

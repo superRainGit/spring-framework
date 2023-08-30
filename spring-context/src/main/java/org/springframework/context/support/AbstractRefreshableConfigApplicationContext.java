@@ -81,6 +81,7 @@ public abstract class AbstractRefreshableConfigApplicationContext extends Abstra
 			this.configLocations = new String[locations.length];
 			for (int i = 0; i < locations.length; i++) {
 				// 这个地方是将对应的占位符的地址路径进行替换
+				// 如果说有占位符 那么会从 Environment 和 Properties 中查看是否可进行占位符的替换
 				this.configLocations[i] = resolvePath(locations[i]).trim();
 			}
 		}

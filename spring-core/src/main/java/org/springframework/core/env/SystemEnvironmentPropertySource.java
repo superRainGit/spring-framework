@@ -90,11 +90,13 @@ public class SystemEnvironmentPropertySource extends MapPropertySource {
 	@Override
 	@Nullable
 	public Object getProperty(String name) {
+		// 这个就是预先判断了一下参数是否在系统环境变量里面
 		String actualName = resolvePropertyName(name);
 		if (logger.isDebugEnabled() && !name.equals(actualName)) {
 			logger.debug("PropertySource '" + getName() + "' does not contain property '" + name +
 					"', but found equivalent '" + actualName + "'");
 		}
+		// 本质上还是从 对应的 map 中获取对应的结果
 		return super.getProperty(actualName);
 	}
 

@@ -292,6 +292,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	@Override
 	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
+		// 无论是按照 Resource 加载的或者 Locations 加载的
+		// 最后都会按照  Resource 进行加载的
 		return loadBeanDefinitions(new EncodedResource(resource));
 	}
 
@@ -325,6 +327,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 					inputSource.setEncoding(encodedResource.getEncoding());
 				}
 				// 核心的部分在这里
+				// 真正的做bean 加载的地方
+				// 在前面是 读取文件流的地方
 				return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
 			}
 			finally {

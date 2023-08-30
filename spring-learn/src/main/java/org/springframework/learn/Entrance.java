@@ -3,7 +3,9 @@ package org.springframework.learn;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.learn.conf.BeanConfiguration;
 import org.springframework.learn.interfaces.ILearnSpringInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,6 +14,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 入口函数
@@ -22,7 +26,7 @@ public class Entrance {
 
 	/**
 	 * 使用file读取文件的路径
-	 * 这种的一般都是决定路径
+	 * 这种的一般都是绝对路径
 	 * file("/")
 	 * 这种属于是相对路径 相对于JVM启动的路径
 	 * file("./")
@@ -45,9 +49,19 @@ public class Entrance {
 	private static Log logger = LogFactory.getLog(Entrance.class);
 
 	public static void main(String[] args) throws Exception {
-		ApplicationContext context = new ClassPathXmlApplicationContext("spring-simple.xml");
-		ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
-		bean.sayHello("Tom");
+		// system environment System.getEnv() 这个获取的是操作系统的变量
+		// System.out.println(System.getenv().get("PATH"));
+		// system properties System.getProperties() 这个获取的是java 设置到 JVM 中的参数
+		// System.out.println(System.getProperty("def"));
+//		ApplicationContext context = new ClassPathXmlApplicationContext("spring-simple.xml");
+//		ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
+//		bean.sayHello("Tom");
+		System.out.println(Object.class.isAssignableFrom(Integer.class));
+		System.out.println(Object.class.isAssignableFrom(int.class));
+		System.out.println(Object.class.isAssignableFrom(List.class));
+		System.out.println(Collection.class.isAssignableFrom(List.class));
+		System.out.println(List.class.isAssignableFrom(List.class));
+		System.out.println(List.class.isAssignableFrom(Collection.class));
 		// System.setProperty("spring", "spring");
 		// String filePath = "classpath:${spring:abc}-config.xml";
 		// ApplicationContext context = new ClassPathXmlApplicationContext(filePath);
@@ -59,6 +73,9 @@ public class Entrance {
 		// learnSpring.sayHello("Tom");
 		// NormalBeanForLookUp.ServiceB serviceB = bf.getBean("serviceB", NormalBeanForLookUp.ServiceB.class);
 		// System.out.println(serviceB);
+		// AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
+		// ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
+		// System.out.println(bean);
 	}
 
 	public static void getAllBeans(ApplicationContext context) {

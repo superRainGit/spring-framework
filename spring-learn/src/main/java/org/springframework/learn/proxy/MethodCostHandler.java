@@ -33,7 +33,8 @@ public class MethodCostHandler<T> implements InvocationHandler {
 		if(!targetInterface.isAssignableFrom(target.getClass())) {
 			throw new IllegalArgumentException("target " + target + " must be interface sub class");
 		}
-		return (T) Proxy.newProxyInstance(targetInterface.getClassLoader(),
-				new Class[]{targetInterface}, new MethodCostHandler<>(target));
+		return null;
+//		return (T) Proxy.newProxyInstance(targetInterface.getClassLoader(),
+//				new Class[]{targetInterface}, new MethodCostHandler<>(target));
 	}
 }

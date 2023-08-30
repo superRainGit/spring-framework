@@ -8,14 +8,11 @@
 		<constructor-arg name="name" value="abc"/>
 	</bean>
 
-	<bean class="org.springframework.learn.processor.SelfBeanPostProcessor" />
+	<bean class="org.springframework.learn.impl.LearnSpringImplConstructorChild">
+		<constructor-arg name="name" value="abcChild"/>
+	</bean>
 
-    <bean class="org.springframework.learn.processor.SelfBeanFactoryPostProcessor" />
-
-	<beans>
-		<bean id="learnSpring" class="org.springframework.learn.impl.LearnSpringImpl">
-			<property name="age" value="28"/>
-		</bean>
-	</beans>
+	<bean class="org.springframework.learn.autowire.DiByTypeNew" autowire="byType">
+	</bean>
 
 </beans>

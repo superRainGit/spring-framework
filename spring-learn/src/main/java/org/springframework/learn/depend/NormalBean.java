@@ -1,6 +1,8 @@
 package org.springframework.learn.depend;
 
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * 正常的bean
@@ -44,5 +46,15 @@ public class NormalBean {
 		public void destroy() throws Exception {
 			System.out.println("bean3 destroy()");
 		}
+	}
+
+	public static void main(String[] args) {
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext() {
+
+			@Override
+			protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+				super.postProcessBeanFactory(beanFactory);
+			}
+		};
 	}
 }

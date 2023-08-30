@@ -42,6 +42,9 @@ final class PostProcessorRegistrationDelegate {
 	}
 
 
+	/**
+	 * 执行 beanFactory 中的 BeanFactoryPostProcessor
+	 */
 	public static void invokeBeanFactoryPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
@@ -194,7 +197,9 @@ final class PostProcessorRegistrationDelegate {
 		// a bean is created during BeanPostProcessor instantiation, i.e. when
 		// a bean is not eligible for getting processed by all BeanPostProcessors.
 		// 上面已经获取了BeanPostProcessor的所有bean的名字 下面不知道为啥又算了一次
+		// 这个地方计算的是期望注册的 beanPostProcessor 的数量 这个的数量是已经加载的+1+希望加载的
 		int beanProcessorTargetCount = beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
+		// 这个地方往里面加了一个自己的beanPostProcessor 所以上面多加了一个1 不过感觉有点偷懒嘞
 		beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
 
 		// Separate between BeanPostProcessors that implement PriorityOrdered,
@@ -254,6 +259,7 @@ final class PostProcessorRegistrationDelegate {
 		// Re-register post-processor for detecting inner beans as ApplicationListeners,
 		// moving it to the end of the processor chain (for picking up proxies etc).
 		// 这个地方放进去了一个新的beanPostProcessor不知道是干嘛的
+		// 这个地方其实是把整个的位置调整了一下
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(applicationContext));
 	}
 

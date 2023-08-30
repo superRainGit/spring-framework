@@ -16,21 +16,14 @@
 
 package org.springframework.transaction.support;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.NamedThreadLocal;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.*;
 
 /**
  * Central delegate that manages resources and transaction synchronizations per thread.
@@ -78,21 +71,27 @@ public abstract class TransactionSynchronizationManager {
 
 	private static final Log logger = LogFactory.getLog(TransactionSynchronizationManager.class);
 
+	// 存储事务资源信息
 	private static final ThreadLocal<Map<Object, Object>> resources =
 			new NamedThreadLocal<>("Transactional resources");
 
+	// 存储事务过程中的一些回调接口(TransactionSynchronization接口，这个可以在事务的过程中给开发者提供一些回调用的)
 	private static final ThreadLocal<Set<TransactionSynchronization>> synchronizations =
 			new NamedThreadLocal<>("Transaction synchronizations");
 
+	// 存储当前正在运行的事务的名称
 	private static final ThreadLocal<String> currentTransactionName =
 			new NamedThreadLocal<>("Current transaction name");
 
+	// 存储当前正在运行的事务是否是只读的
 	private static final ThreadLocal<Boolean> currentTransactionReadOnly =
 			new NamedThreadLocal<>("Current transaction read-only status");
 
+	// 存储当前正在运行的事务的隔离级别
 	private static final ThreadLocal<Integer> currentTransactionIsolationLevel =
 			new NamedThreadLocal<>("Current transaction isolation level");
 
+	// 存储当前正在运行的事务是否是活动状态，事务启动的时候会被激活
 	private static final ThreadLocal<Boolean> actualTransactionActive =
 			new NamedThreadLocal<>("Actual transaction active");
 

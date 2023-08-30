@@ -32,39 +32,39 @@ public class TypeDemo2 {
 		Type[] genericParameterTypes = m1.getGenericParameterTypes();
 		for (Type genericParameterType : genericParameterTypes) {
 			if(genericParameterType instanceof TypeVariable) {
-				TypeVariable typeVariable = (TypeVariable) genericParameterType;
-				// 如果是泛型化参数
-				System.out.println("变量类型名称: " + typeVariable.getTypeName());
-				System.out.println("变量名称: " + typeVariable.getName());
-				System.out.println("变量在哪里声明: " + typeVariable.getGenericDeclaration());
-				Type[] bounds = typeVariable.getBounds();
-				System.out.println("这个变量的上界数量: " + bounds.length);
-				System.out.println("这个变量的上界清单: ");
-				for (Type bound : bounds) {
-					System.out.println(bound.getTypeName());
-				}
+//				TypeVariable typeVariable = (TypeVariable) genericParameterType;
+//				// 如果是泛型化参数
+//				System.out.println("变量类型名称: " + typeVariable.getTypeName());
+//				System.out.println("变量名称: " + typeVariable.getName());
+//				System.out.println("变量在哪里声明: " + typeVariable.getGenericDeclaration());
+//				Type[] bounds = typeVariable.getBounds();
+//				System.out.println("这个变量的上界数量: " + bounds.length);
+//				System.out.println("这个变量的上界清单: ");
+//				for (Type bound : bounds) {
+//					System.out.println(bound.getTypeName());
+//				}
 			} else if(genericParameterType instanceof Class) {
 				// 标准参数
-				Class pt = (Class) genericParameterType;
-				System.out.println("参数类型名称: " + pt.getTypeName());
-				System.out.println("参数类名: " + pt.getName());
+//				Class pt = (Class) genericParameterType;
+//				System.out.println("参数类型名称: " + pt.getTypeName());
+//				System.out.println("参数类名: " + pt.getName());
 			}
 			System.out.println("---------------------------");
 		}
 		// 获取方法的返回值
 		Type genericReturnType = m1.getGenericReturnType();
 		if(genericReturnType instanceof TypeVariable) {
-			TypeVariable typeVariable = (TypeVariable) genericReturnType;
-			System.out.println("变量类型名称: " + typeVariable.getTypeName());
-			System.out.println("变量名称: " + typeVariable.getName());
-			System.out.println("变量在哪里声明: " + typeVariable.getGenericDeclaration());
-			Type[] bounds = typeVariable.getBounds();
-			System.out.println("这个变量的上界数量: " + bounds.length);
-			System.out.println("这个变量的上界清单: ");
-			for (Type bound : bounds) {
-				System.out.println(bound.getTypeName());
-			}
-			System.out.println("---------------------------");
+//			TypeVariable typeVariable = (TypeVariable) genericReturnType;
+//			System.out.println("变量类型名称: " + typeVariable.getTypeName());
+//			System.out.println("变量名称: " + typeVariable.getName());
+//			System.out.println("变量在哪里声明: " + typeVariable.getGenericDeclaration());
+//			Type[] bounds = typeVariable.getBounds();
+//			System.out.println("这个变量的上界数量: " + bounds.length);
+//			System.out.println("这个变量的上界清单: ");
+//			for (Type bound : bounds) {
+//				System.out.println(bound.getTypeName());
+//			}
+//			System.out.println("---------------------------");
 		}
 		TypeVariable<Method>[] typeParameters = m1.getTypeParameters();
 		for (TypeVariable<Method> typeParameter : typeParameters) {

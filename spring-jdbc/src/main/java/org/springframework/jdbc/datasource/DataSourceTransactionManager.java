@@ -16,23 +16,18 @@
 
 package org.springframework.jdbc.datasource;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.sql.DataSource;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionSystemException;
-import org.springframework.transaction.support.AbstractPlatformTransactionManager;
-import org.springframework.transaction.support.DefaultTransactionStatus;
-import org.springframework.transaction.support.ResourceTransactionManager;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.transaction.support.TransactionSynchronizationUtils;
+import org.springframework.transaction.support.*;
 import org.springframework.util.Assert;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * {@link org.springframework.transaction.PlatformTransactionManager}
@@ -235,10 +230,16 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 	@Override
 	protected Object doGetTransaction() {
+		// @3.2-1：创建数据源事务对象
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
+		// @3.2-2：是否支持内部事务
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
+		// @3.2-4：ConnectionHolder表示jdbc连接持有者，简单理解：数据的连接被丢到ConnectionHolder中了，
+		// ConnectionHolder中提供了一些方法来返回里面的连接，此处调用TransactionSynchronizationManager.getResource方法来获取ConnectionHolder对象
 		ConnectionHolder conHolder =
 				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
+		// @3.2-5：将conHolder丢到DataSourceTransactionObject中，第二个参数表示是否是一个新的连接，明显不是的吗，
+		// 新的连接需要通过datasource来获取，通过datasource获取的连接才是新的连接
 		txObject.setConnectionHolder(conHolder, false);
 		return txObject;
 	}
@@ -254,7 +255,9 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 	 */
 	@Override
 	protected void doBegin(Object transaction, TransactionDefinition definition) {
+		// 数据源事务对象
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) transaction;
+		// 数据库连接
 		Connection con = null;
 
 		try {
@@ -270,30 +273,40 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			txObject.getConnectionHolder().setSynchronizedWithTransaction(true);
 			con = txObject.getConnectionHolder().getConnection();
 
+			// 获取隔离级别
 			Integer previousIsolationLevel = DataSourceUtils.prepareConnectionForTransaction(con, definition);
+			// 设置隔离级别
 			txObject.setPreviousIsolationLevel(previousIsolationLevel);
 
 			// Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
 			// so we don't want to do it unnecessarily (for example if we've explicitly
 			// configured the connection pool to set it already).
+			// 判断连接是否是自动提交的，如果是自动提交的将其置为手动提交
 			if (con.getAutoCommit()) {
+				// 在txObject中存储一下连接自动提交老的值，用于在事务执行完毕之后，还原一下Connection的autoCommit的值
 				txObject.setMustRestoreAutoCommit(true);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Switching JDBC Connection [" + con + "] to manual commit");
 				}
+				// 设置手动提交
 				con.setAutoCommit(false);
 			}
 
+			// 准备事务连接
 			prepareTransactionalConnection(con, definition);
+			// 设置事务活动开启
 			txObject.getConnectionHolder().setTransactionActive(true);
 
+			// 根据事务定义信息获取事务超时时间
 			int timeout = determineTimeout(definition);
 			if (timeout != TransactionDefinition.TIMEOUT_DEFAULT) {
 				txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
 			}
 
 			// Bind the connection holder to the thread.
+			// txObject中的ConnectionHolder是否是一个新的，确实是新的，所以这个地方返回true
 			if (txObject.isNewConnectionHolder()) {
+				// 将datasource->ConnectionHolder丢到resource ThreadLocal的map中
 				TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
 			}
 		}
