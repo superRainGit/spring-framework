@@ -16,30 +16,15 @@
 
 package org.springframework.context.annotation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.aop.framework.autoproxy.AutoProxyUtils;
 import org.springframework.beans.PropertyValues;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
-import org.springframework.beans.factory.config.SingletonBeanRegistry;
+import org.springframework.beans.factory.config.*;
 import org.springframework.beans.factory.parsing.FailFastProblemReporter;
 import org.springframework.beans.factory.parsing.PassThroughSourceExtractor;
 import org.springframework.beans.factory.parsing.ProblemReporter;
@@ -64,6 +49,8 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+
+import java.util.*;
 
 /**
  * {@link BeanFactoryPostProcessor} used for bootstrapping processing of
@@ -239,6 +226,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 		this.registriesPostProcessed.add(registryId);
 
+		// 这个方法里面干的事情就是解析 @Configuration 标注的类 并且根据其中
+		// 使用 @Bean 注解的方法解析为对应的 BeanDefinition 并将其加入到 BeanDefinitionRegistry( 其实目前就是一个beanFactory对象 )
 		processConfigBeanDefinitions(registry);
 	}
 
@@ -279,6 +268,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 					logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
 				}
 			}
+			// 这个地方过滤出来所有的 @Configuration 标记的类 并将其添加到候选列表里面
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
 			}
@@ -338,6 +328,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			alreadyParsed.addAll(configClasses);
 
 			candidates.clear();
+			// 下面是处理哪些还没有解析到的类 进行记录 为外部的 while 循环提供条件支持
 			if (registry.getBeanDefinitionCount() > candidateNames.length) {
 				String[] newCandidateNames = registry.getBeanDefinitionNames();
 				Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));
@@ -361,6 +352,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
 		// Register the ImportRegistry as a bean in order to support ImportAware @Configuration classes
 		if (sbr != null && !sbr.containsSingleton(IMPORT_REGISTRY_BEAN_NAME)) {
+			// TODO	2025/07/15 手动的向容器内注册一个 bean 就是不知道这个是干嘛用的
 			sbr.registerSingleton(IMPORT_REGISTRY_BEAN_NAME, parser.getImportRegistry());
 		}
 

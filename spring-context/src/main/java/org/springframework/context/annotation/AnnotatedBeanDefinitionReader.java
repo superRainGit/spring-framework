@@ -16,9 +16,6 @@
 
 package org.springframework.context.annotation;
 
-import java.lang.annotation.Annotation;
-import java.util.function.Supplier;
-
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionCustomizer;
@@ -32,6 +29,9 @@ import org.springframework.core.env.EnvironmentCapable;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.lang.annotation.Annotation;
+import java.util.function.Supplier;
 
 /**
  * Convenient adapter for programmatic registration of bean classes.
@@ -85,6 +85,7 @@ public class AnnotatedBeanDefinitionReader {
 		Assert.notNull(environment, "Environment must not be null");
 		this.registry = registry;
 		this.conditionEvaluator = new ConditionEvaluator(registry, environment, null);
+		// 这个地方往默认的 registry 中注入了一些 processor 的 Bean
 		AnnotationConfigUtils.registerAnnotationConfigProcessors(this.registry);
 	}
 
@@ -260,6 +261,8 @@ public class AnnotatedBeanDefinitionReader {
 		abd.setScope(scopeMetadata.getScopeName());
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
 
+		// 这个地方是解析一些目前对应类上的 @Primary @Lazy @DependsOn @Role @Description 这些注解
+		// 并将其放置到 BeanDefinition 中
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {

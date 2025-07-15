@@ -16,28 +16,8 @@
 
 package org.springframework.context.annotation;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.net.UnknownHostException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringJoiner;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -58,11 +38,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.*;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.DefaultPropertySourceFactory;
@@ -77,12 +54,13 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.net.UnknownHostException;
+import java.util.*;
 
 /**
  * Parses a {@link Configuration} class definition, populating a collection of
@@ -245,7 +223,7 @@ class ConfigurationClassParser {
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass);
 		}
 		while (sourceClass != null);
-
+		// 在解析完成之后 将对应的解析的结果放置到对应配置类的解析 map 中去
 		this.configurationClasses.put(configClass, configClass);
 	}
 
@@ -392,11 +370,18 @@ class ConfigurationClassParser {
 	 */
 	private Set<MethodMetadata> retrieveBeanMethodMetadata(SourceClass sourceClass) {
 		AnnotationMetadata original = sourceClass.getMetadata();
+		// 这个地方获取 sourceClass {目前是 @Configuration 标记的类}
+		// 然后获取对应的类中 标记了 @Bean 的方法
 		Set<MethodMetadata> beanMethods = original.getAnnotatedMethods(Bean.class.getName());
 		if (beanMethods.size() > 1 && original instanceof StandardAnnotationMetadata) {
 			// Try reading the class file via ASM for deterministic declaration order...
 			// Unfortunately, the JVM's standard reflection returns methods in arbitrary
 			// order, even between different runs of the same application on the same JVM.
+			// 当获取到beanMethods 的长度超过1 时 因为 Java 自带的反射的方法无法保证获取的顺序
+			// 所以 spring 内部通过ASM 获取字节码的方式去获取对应的数据
+			// asm 读取的直接就是字节码 完全和类中声明的顺序一致
+			// 这个解决的问题是 当如果有多个声明一致的注解 例如 @PostConstruct 和 @PreDestroy 这类的 如果直接使用 Java 原生的读取
+			// 就会出现一个问题就是无法保证执行顺序
 			try {
 				AnnotationMetadata asm =
 						this.metadataReaderFactory.getMetadataReader(original.getClassName()).getAnnotationMetadata();

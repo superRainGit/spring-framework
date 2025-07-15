@@ -2,10 +2,14 @@ package org.springframework.learn;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.learn.conf.BeanConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.learn.impl.LearnSpringImplConstructor;
+import org.springframework.learn.impl.TestLearnSpringAutowired;
 import org.springframework.learn.interfaces.ILearnSpringInterface;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,8 +18,6 @@ import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * 入口函数
@@ -53,15 +55,15 @@ public class Entrance {
 		// System.out.println(System.getenv().get("PATH"));
 		// system properties System.getProperties() 这个获取的是java 设置到 JVM 中的参数
 		// System.out.println(System.getProperty("def"));
-//		ApplicationContext context = new ClassPathXmlApplicationContext("spring-simple.xml");
-//		ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
-//		bean.sayHello("Tom");
-		System.out.println(Object.class.isAssignableFrom(Integer.class));
-		System.out.println(Object.class.isAssignableFrom(int.class));
-		System.out.println(Object.class.isAssignableFrom(List.class));
-		System.out.println(Collection.class.isAssignableFrom(List.class));
-		System.out.println(List.class.isAssignableFrom(List.class));
-		System.out.println(List.class.isAssignableFrom(Collection.class));
+		// ApplicationContext context = new ClassPathXmlApplicationContext("spring-simple.xml");
+		// ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
+		// bean.sayHello("Tom");
+//		System.out.println(Object.class.isAssignableFrom(Integer.class));
+//		System.out.println(Object.class.isAssignableFrom(int.class));
+//		System.out.println(Object.class.isAssignableFrom(List.class));
+//		System.out.println(Collection.class.isAssignableFrom(List.class));
+//		System.out.println(List.class.isAssignableFrom(List.class));
+//		System.out.println(List.class.isAssignableFrom(Collection.class));
 		// System.setProperty("spring", "spring");
 		// String filePath = "classpath:${spring:abc}-config.xml";
 		// ApplicationContext context = new ClassPathXmlApplicationContext(filePath);
@@ -76,6 +78,31 @@ public class Entrance {
 		// AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BeanConfiguration.class);
 		// ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
 		// System.out.println(bean);
+		// MergedAnnotations from = MergedAnnotations.from(ConfigurationTest.class,
+		// 		MergedAnnotations.SearchStrategy.DIRECT, RepeatableContainers.none(),
+		// 		AnnotationFilter.NONE);
+		// System.out.println(from);
+		ApplicationContext context = new AnnotationConfigApplicationContext(ConfigurationTest.class);
+		ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
+		System.out.println(bean.sayHello("Tom"));
+		TestLearnSpringAutowired test = context.getBean(TestLearnSpringAutowired.class);
+		test.testLearnSpringAutowired("ABC");
+	}
+
+	@Configuration
+	@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+	public static class ConfigurationTest {
+
+		@Bean
+		public TestLearnSpringAutowired testLearnSpringAutowired() {
+			return new TestLearnSpringAutowired();
+		}
+
+		@Bean
+		public ILearnSpringInterface learnSpring() {
+			return new LearnSpringImplConstructor("test");
+		}
+
 	}
 
 	public static void getAllBeans(ApplicationContext context) {

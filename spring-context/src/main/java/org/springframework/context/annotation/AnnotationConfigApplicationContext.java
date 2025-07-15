@@ -16,8 +16,6 @@
 
 package org.springframework.context.annotation;
 
-import java.util.function.Supplier;
-
 import org.springframework.beans.factory.config.BeanDefinitionCustomizer;
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -25,6 +23,8 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.function.Supplier;
 
 /**
  * Standalone application context, accepting <em>component classes</em> as input &mdash;
@@ -63,7 +63,11 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
+		// 这个方法内部往 applicationContext 手动添加了部分 internalXxx 的一些processor 的beanDefinition
+		// 如果写入的是普通的class 那么直接用 reader 进行解析
 		this.reader = new AnnotatedBeanDefinitionReader(this);
+		// 初始化了一些 扫描器? 看起来像是这样  里面  includeFilter 标记的默认的注解是  @Component
+		// 如果写入的是 一个包名的路径 那么用 scanner 进行解析
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
@@ -85,6 +89,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	public AnnotationConfigApplicationContext(Class<?>... componentClasses) {
 		this();
+		// 根据注入的组件类进行注册
 		register(componentClasses);
 		refresh();
 	}

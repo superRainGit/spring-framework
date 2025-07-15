@@ -4,7 +4,7 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans
         https://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean class="org.springframework.learn.impl.LearnSpringImplConstructor">
+	<bean id="learnSpring" class="org.springframework.learn.impl.LearnSpringImplConstructor">
 		<constructor-arg name="name" value="abc"/>
 	</bean>
 
@@ -12,10 +12,10 @@
 
     <bean class="org.springframework.learn.processor.SelfBeanFactoryPostProcessor" />
 
-	<beans>
-		<bean id="learnSpring" class="org.springframework.learn.impl.LearnSpringImpl">
-			<property name="age" value="28"/>
-		</bean>
-	</beans>
+<!--	<beans>-->
+<!--		<bean id="learnSpring" class="org.springframework.learn.impl.LearnSpringImpl">-->
+<!--			<property name="age" value="28"/>-->
+<!--		</bean>-->
+<!--	</beans>-->
 
 </beans>

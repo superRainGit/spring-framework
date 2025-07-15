@@ -16,10 +16,6 @@
 
 package org.springframework.context.annotation;
 
-import java.beans.Introspector;
-import java.util.Map;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -30,6 +26,10 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
+
+import java.beans.Introspector;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * {@link org.springframework.beans.factory.support.BeanNameGenerator}
@@ -98,6 +98,7 @@ public class AnnotationBeanNameGenerator implements BeanNameGenerator {
 		String beanName = null;
 		for (String type : types) {
 			AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(amd, type);
+			// 在获取bean名称的逻辑中 如果是 @Component 大类中的注解 会优先采用里面配置的 value 作为bean的名字
 			if (attributes != null && isStereotypeWithNameValue(type, amd.getMetaAnnotationTypes(type), attributes)) {
 				Object value = attributes.get("value");
 				if (value instanceof String) {
