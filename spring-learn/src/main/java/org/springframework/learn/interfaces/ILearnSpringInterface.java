@@ -11,4 +11,6 @@ public interface ILearnSpringInterface {
 	 * @return 返回成功与否
 	 */
 	String sayHello(String name);
+
+	default public void testLeanAutowired(String name) {}
 }

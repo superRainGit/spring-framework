@@ -1,5 +1,6 @@
 package org.springframework.learn.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.learn.interfaces.ILearnSpringInterface;
 
 /**
@@ -7,6 +8,9 @@ import org.springframework.learn.interfaces.ILearnSpringInterface;
  * @author zhangcy
  */
 public class LearnSpringImplConstructor implements ILearnSpringInterface {
+
+	@Autowired
+	private TestLearnSpringAutowired testLearnSpringAutowired;
 
 	private String name;
 
@@ -17,6 +21,10 @@ public class LearnSpringImplConstructor implements ILearnSpringInterface {
 	@Override
 	public String sayHello(String name) {
 		return "hello " + name;
+	}
+
+	public void testLeanAutowired(String name) {
+		this.testLearnSpringAutowired.testLearnSpringAutowired(name);
 	}
 
 	@Override

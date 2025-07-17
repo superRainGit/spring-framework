@@ -85,6 +85,7 @@ public class Entrance {
 		ApplicationContext context = new AnnotationConfigApplicationContext(ConfigurationTest.class);
 		ILearnSpringInterface bean = context.getBean(ILearnSpringInterface.class);
 		System.out.println(bean.sayHello("Tom"));
+		bean.testLeanAutowired("YAMAHA");
 		TestLearnSpringAutowired test = context.getBean(TestLearnSpringAutowired.class);
 		test.testLearnSpringAutowired("ABC");
 	}

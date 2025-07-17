@@ -129,7 +129,9 @@ final class PostProcessorRegistrationDelegate {
 			}
 
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+			// 先执行 beanFactory 中自带的
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
+			// 然后再执行 手动注册到 applicationContext 中的 这个 regularPostProcessors 目前从上面看代码是这样的
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
 
@@ -140,6 +142,8 @@ final class PostProcessorRegistrationDelegate {
 
 		// Do not initialize FactoryBeans here: We need to leave all regular beans
 		// uninitialized to let the bean factory post-processors apply to them!
+		// 因为上面使用 BeanDefinitionRegistryPostProcessors 其中对应的接口一定是 BeanFactoryPostProcessor 的子类
+		// 而且上面在逻辑的最后面也执行了 BeanFactoryPostProcessor 的方法
 		String[] postProcessorNames =
 				beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class, true, false);
 
