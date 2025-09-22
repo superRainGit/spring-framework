@@ -8,6 +8,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.learn.bean.FactoryBeanModel;
 import org.springframework.learn.impl.LearnSpringImplConstructor;
 import org.springframework.learn.impl.TestLearnSpringAutowired;
 import org.springframework.learn.interfaces.ILearnSpringInterface;
@@ -88,6 +89,12 @@ public class Entrance {
 		bean.testLeanAutowired("YAMAHA");
 		TestLearnSpringAutowired test = context.getBean(TestLearnSpringAutowired.class);
 		test.testLearnSpringAutowired("ABC");
+		FactoryBeanModel.FactoryBeanModelInner factoryBeanModel = (FactoryBeanModel.FactoryBeanModelInner) context.getBean("factoryBeanModel");
+		FactoryBeanModel.FactoryBeanModelInner factoryBeanModel2 = (FactoryBeanModel.FactoryBeanModelInner) context.getBean("factoryBeanModel");
+		factoryBeanModel.test();
+		System.out.println(factoryBeanModel2.equals(factoryBeanModel));
+		org.springframework.learn.bean.FactoryBeanModel beanFactory = (FactoryBeanModel) context.getBean("&factoryBeanModel");
+		System.out.println(beanFactory.getClass());
 	}
 
 	@Configuration
@@ -104,6 +111,10 @@ public class Entrance {
 			return new LearnSpringImplConstructor("test");
 		}
 
+		@Bean
+		public FactoryBeanModel factoryBeanModel() {
+			return new FactoryBeanModel();
+		}
 	}
 
 	public static void getAllBeans(ApplicationContext context) {

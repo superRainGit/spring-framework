@@ -1148,7 +1148,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (mbd.getFactoryMethodName() != null) {
-			// 采用工厂方法实例化，不熟悉这个概念的读者请看附录，注意，不是 FactoryBean
+			// 采用工厂方法实例化，不熟悉这个概念的读者请看附录，注意，不是 FactoryBean 这个地方有点奇怪 得看一下正常的逻辑里面什么场景下会走到这个方法里面去 以及内部是怎样的逻辑
 			return instantiateUsingFactoryMethod(beanName, mbd, args);
 		}
 

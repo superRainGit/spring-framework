@@ -224,6 +224,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			// 下面这个方法：如果是普通 Bean 的话，直接返回 sharedInstance，
 			// 如果是 FactoryBean 的话，返回它创建的那个实例对象
 			// (FactoryBean 知识，读者若不清楚请移步附录)
+			// 这个地方的处理逻辑是如果是 factoryBean 的对象 那么 & 获取时会优先使用 factory 的实体 如果不是 & 那么优先取缓存中设置的
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
@@ -1792,6 +1793,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		else {
 			object = getCachedObjectForFactoryBean(beanName);
 		}
+		// 这个地方的判断逻辑决定了 在真实的使用场景下 如果设置的 factoryBean isSingleton 方法返回的是 true 的话
+		// 有优先往缓存里面放 而且取的时候会直接从缓存里面取 所以在使用场景上 在 FactoryBean 的实现类中没必要保证那个 getFactory() 方法的返回值是同一个
+		// 因为在 isSingleton() 返回 true 的时候 保证了 getFactory() 方法调用一次
 		if (object == null) {
 			// Return bean instance from factory.
 			FactoryBean<?> factory = (FactoryBean<?>) beanInstance;

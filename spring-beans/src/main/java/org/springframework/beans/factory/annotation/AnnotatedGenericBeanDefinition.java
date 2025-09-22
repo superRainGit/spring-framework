@@ -57,6 +57,7 @@ public class AnnotatedGenericBeanDefinition extends GenericBeanDefinition implem
 		setBeanClass(beanClass);
 		// 解析提供的类的注解信息 然后将对应的注解信息封装为 metadata 属性
 		// 目前来看是没有直接解析对应的注解的所有的属性的
+		// 不管别的 反正这个方法很屌 MergedAnnotations 这个类也很屌就行了
 		this.metadata = AnnotationMetadata.introspect(beanClass);
 	}
 
